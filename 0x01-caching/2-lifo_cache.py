@@ -21,11 +21,12 @@ class LIFOCache(BaseCaching):
             the last added item (LIFO)
         """
         if key is not None and item is not None:
-            if key not in self.cache_data and len(self.cache_data) >= self.MAX_ITEMS:
-                last_key = list(self.cache_data.keys())[-1]
-                del self.cache_data[last_key]
-                print(f"DISCARD: {last_key}")
-            self.cache_data[key] = item
+            if key not in self.cache_data:
+                if len(self.cache_data) >= self.MAX_ITEMS:
+                    last_key = list(self.cache_data.keys())[-1]
+                    del self.cache_data[last_key]
+                    print(f"DISCARD: {last_key}")
+                self.cache_data[key] = item
 
     def get(self, key):
         """ Get an item by key
