@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Adds `get_page` method to `Server` class
+Adds `get_page` and `get_hyper` methods to `Server` class
 """
 import csv
-from typing import List, Tuple
+import math
+from typing import List, Tuple, Dict, Any
 
 
 class Server:
@@ -46,3 +47,26 @@ class Server:
         assert page > 0 and page_size > 0
         startIndex, endIndex = self.index_range(page, page_size)
         return self.dataset()[startIndex:endIndex]
+
+    def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
+        """
+        Get items for the given page number with hypermedia metadata
+        Args:
+            page (int): page numbers
+            page_size (int): number of items per page
+        Returns:
+            (Dict[str, Any]): a dictionary with hypermedia pagination info
+        """
+        data = self.get_page(page, page_size)
+        total_items = len(self.dataset())
+        total_pages = math.ceil(total_items / page_size)
+
+        hypermedia_info = {
+            'page_size': len(data),
+            'page': page,
+            'data': data,
+            'next_page': page + 1 if page < total_pages else None,
+            'prev_page': page - 1 if page > 1 else None,
+            'total_pages': total_pages
+        }
+        return hypermedia_info
