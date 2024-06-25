@@ -1,28 +1,14 @@
 #!/usr/bin/env python3
 """
-This module contains a helper function for pagination and a Server class
-to handle pagination of a dataset.
+This module contains the Server class for
+paginating a dataset of popular baby names.
 """
 
 import csv
-import math
-from typing import List, Tuple
+from typing import List, Any
 
-
-def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """
-    Calculate the start and end indices for a given pagination parameters.
-
-    Args:
-        page (int): The current page number (1-indexed).
-        page_size (int): The number of items per page.
-
-    Returns:
-        tuple: A tuple containing the start and end indices.
-    """
-    start_index = (page - 1) * page_size
-    end_index = page * page_size
-    return (start_index, end_index)
+# Dynamically import the index_range function using __import__
+index_range = __import__('0-simple_helper_function').index_range
 
 
 class Server:
@@ -33,18 +19,21 @@ class Server:
     def __init__(self):
         self.__dataset = None
 
-    def dataset(self) -> List[List]:
+    def dataset(self) -> List[List[Any]]:
         """Cached dataset
+
+        Returns:
+            List[List]: The dataset of popular baby names.
         """
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
-            self.__dataset = dataset[1:]
+            self.__dataset = dataset[1:]  # Skip the header row
 
         return self.__dataset
 
-    def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
+    def get_page(self, page: int = 1, page_size: int = 10) -> List[List[Any]]:
         """
         Get a page from the dataset.
 
@@ -53,7 +42,7 @@ class Server:
             page_size (int): The number of items per page (default is 10).
 
         Returns:
-            list: A list of rows corresponding to the requested page.
+            List[List]: A list of rows corresponding to the requested page.
         """
         assert isinstance(page, int) and page > 0,
         "Page must be a positive integer."
